@@ -4,6 +4,8 @@ import com.example.practicequerydsl.dto.MemberDto;
 import com.example.practicequerydsl.dto.UserDto;
 import com.example.practicequerydsl.entity.Member;
 import com.example.practicequerydsl.entity.Team;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -167,6 +169,58 @@ public class QuerydslBasicTest {
         //when
 
         //then
+    }
+
+    @Test
+    public void dynamicQuery_BooleanBuilder() throws Exception {
+        //given
+        String usernameParam = "member1";
+        Integer ageParam = null;
+
+        List<Member> result = searchMember1(usernameParam, ageParam);
+        assertThat(result.size()).isEqualTo(1);
+
+        //when
+
+        //then
+    }
+
+    private List<Member> searchMember1(String usernameParam, Integer ageParam) {
+        BooleanBuilder builder = new BooleanBuilder();
+        if (usernameParam != null)
+            builder.and(member.username.eq(usernameParam));
+
+        if (ageParam != null)
+            builder.and(member.age.eq(ageParam));
+
+        return queryFactory
+                .selectFrom(member)
+                .where(builder)
+                .fetch();
+    }
+
+    @Test
+    public void dynamicQuery_WhereParam() throws Exception {
+        String usernameParam = "member1";
+        Integer ageParam = 10;
+
+        List<Member> result = searchMember2(usernameParam, ageParam);
+        assertThat(result.size()).isEqualTo(1);
+    }
+
+    private List<Member> searchMember2(String usernameParam, Integer ageParam) {
+        return queryFactory
+                .selectFrom(member)
+                .where(usernameEq(usernameParam), ageEq(ageParam))
+                .fetch();
+    }
+
+    private Predicate usernameEq(String usernameParam) {
+        return usernameParam == null ? null : member.username.eq(usernameParam);
+    }
+
+    private Predicate ageEq(Integer ageParam) {
+        return ageParam == null ? null : member.age.eq(ageParam);
     }
 
 }
