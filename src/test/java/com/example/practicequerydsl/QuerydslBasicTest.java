@@ -223,4 +223,18 @@ public class QuerydslBasicTest {
         return ageParam == null ? null : member.age.eq(ageParam);
     }
 
+    @Test
+    public void bulkUpdate() throws Exception {
+        //given
+        long count = queryFactory
+                .update(member)
+                .set(member.username, "비회원")
+                .where(member.age.lt(28))
+                .execute();
+        //when
+
+        //then
+        assertThat(count).isEqualTo(2);
+    }
+
 }
