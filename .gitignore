@@ -124,6 +124,7 @@ Temporary Items
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,macos
 
+src/main/generated
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
